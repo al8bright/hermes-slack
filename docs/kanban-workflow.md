@@ -27,7 +27,7 @@ Hermes에는 다른 에이전트를 부르는 수단이 둘 있다.
 ## 2. 보드 구성
 
 ```bash
-hermes kanban init                                    # ~/.hermes/kanban.db 생성
+hermes kanban init                                    # ~/.hermes/kanban.db 생성 (기본 보드)
 hermes kanban boards create bateam \
   --name "BA Team" \
   --description "역할·성향을 분리한 10인 가상 개발팀" \
@@ -39,7 +39,14 @@ hermes kanban boards show                             # 활성 보드 확인
 
 **보드 slug를 `bateam` 으로 둔다.** 프로필 이름은 역할별로 나갔으므로, 팀 이름은 보드가 이어받는다.
 
-보드는 서로 격리된다. 다른 프로젝트가 생기면 `boards create` 로 나누고, 워커는 자기 보드만 본다(`HERMES_KANBAN_BOARD`). **보드 간 링크는 불가하다.**
+**보드마다 DB 파일이 따로 생긴다.**
+
+```
+~/.hermes/kanban.db                              ← kanban init 이 만드는 기본 보드
+~/.hermes/kanban/boards/bateam/kanban.db         ← boards create 가 만드는 bateam 보드
+```
+
+`--switch` 를 붙였으므로 이후 `hermes kanban` 명령은 `bateam` 보드를 대상으로 한다. 현재 보드는 `hermes kanban boards show` 로 확인한다. 보드는 서로 격리되고 워커는 자기 보드만 본다(`HERMES_KANBAN_BOARD`). **보드 간 링크는 불가하다.**
 
 ---
 
@@ -62,7 +69,27 @@ hermes config set kanban.max_in_progress_per_profile 1
 | `max_in_progress_per_profile` | `1` | 한 역할이 동시에 여러 태스크를 잡으면 맥락이 섞인다. 회의 발언이 겹치는 것과 같다 |
 | `failure_limit` | `2` (기본) | 연속 실패 시 자동 차단 |
 
-> **미결** — `kanban.*` 설정이 전역인지 프로필별인지 확인 필요. 디스패처가 게이트웨이(=`lucas`) 안에서 도므로 `lucas config set ...` 이 맞을 가능성이 높다. `hermes config` 와 `lucas config` 출력을 비교해 볼 것.
+### 설정을 어디에 걸 것인가 — 전역 vs 프로필
+
+`kanban.*` 는 **두 곳 모두에 쓸 수 있다.**
+
+| 명령 | 기록 위치 |
+| --- | --- |
+| `hermes config set kanban.*` | `~/.hermes/config.yaml` — 전역 |
+| `lucas config set kanban.*` | `~/.hermes/profiles/lucas/config.yaml` — 프로필 |
+
+**디스패처는 게이트웨이 프로세스 안에서 돌므로, 게이트웨이를 띄우는 프로필(`lucas`)의 설정이 유효하다.** 따라서 위 명령은 `lucas config set ...` 으로 거는 것이 맞다.
+
+다만 **두 곳의 값이 어긋나면 어느 쪽이 읽히는지 헷갈린다.** 특히 `auto_decompose` 를 프로필에만 `false` 로 두면 전역은 기본값 `true` 로 남아, 다른 경로로 디스패치가 일어날 때 자동 분해가 켜질 수 있다. 값을 양쪽에 동일하게 걸어두는 편이 안전하다.
+
+```bash
+for scope in "hermes" "lucas"; do
+  $scope config set kanban.orchestrator_profile      lucas
+  $scope config set kanban.default_assignee          lucas
+  $scope config set kanban.max_in_progress_per_profile 1
+  $scope config set kanban.auto_decompose            false
+done
+```
 
 ### `auto_decompose` — 켤 것인가
 
@@ -260,3 +287,20 @@ hermes kanban tail <task-id>
 ```
 
 `--dry-run` 을 먼저 돌리는 것을 습관으로 둘 것. 배정이 잘못된 상태로 10개 워커가 뜨면 되돌리기 번거롭다.
+
+### 게이트웨이 없이 먼저 검증한다
+
+태스크를 만들면 CLI가 이렇게 경고한다.
+
+```
+⚠  No gateway is running — the task will sit in 'ready' until you start it.
+```
+
+**이 경고를 따라 바로 게이트웨이를 띄우지 말 것.** `hermes kanban dispatch` 가 게이트웨이 없이 **1회성 디스패치**를 수행한다. 순서를 이렇게 나눈다.
+
+| 단계 | 검증 대상 |
+| --- | --- |
+| 1. `hermes kanban dispatch` (수동) | 보드·배정·워커 spawn·`kanban_*` 툴 호출 |
+| 2. `lucas gateway setup` + `start` | Slack 연결과 자동 디스패치 |
+
+동시에 붙이면 실패했을 때 칸반 문제인지 Slack 문제인지 갈리지 않는다. 위 경고는 "자동 반복 디스패치가 없다"는 뜻이지 "지금 실행할 수 없다"는 뜻이 아니다.
