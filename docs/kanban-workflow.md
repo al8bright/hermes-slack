@@ -121,6 +121,41 @@ hermes config set kanban.auto_decompose false
 
 ---
 
+## 3.5 프로필 설명 — 배정의 전제
+
+**decomposer 는 프로필 이름이 아니라 설명을 읽고 담당자를 정한다.**
+
+> the built-in decomposer uses `auxiliary.kanban_decomposer`, **reads your profile roster + descriptions**, and produces a graph of child tasks routed to the best-fit specialists.
+
+설명이 비어 있으면 라우팅이 불가능해 전부 `kanban.default_assignee` 로 떨어진다. 실제로 처음 `decompose` 를 돌렸을 때 4개 자식이 모두 `lucas` 에게 배정된 것이 이 때문이었다.
+
+```bash
+./scripts/set-descriptions.sh --dry-run
+./scripts/set-descriptions.sh
+./scripts/set-descriptions.sh --show      # 적용 확인
+```
+
+내용은 [`config/descriptions.conf`](../config/descriptions.conf) 에 있다. **성격이 아니라 어떤 태스크를 맡아야 하는가**를 쓴다.
+
+| | |
+| --- | --- |
+| 나쁨 | "보수적이고 리스크를 싫어한다" |
+| 좋음 | "권한·인증·데이터 흐름·공급망 위험을 검토한다" |
+
+decomposer 가 태스크 본문과 이 설명을 매칭하므로, 설명에 그 역할이 다루는 **명사**가 들어 있어야 한다.
+
+수동으로는 이렇게 한다.
+
+```bash
+hermes profile describe jack --text "보안 검토와 위협 모델링을 맡는다. ..."
+hermes profile describe jack                 # 읽기
+hermes profile describe --all --auto         # 비어 있는 것만 LLM이 자동 생성
+```
+
+설명은 `<profile_dir>/profile.yaml` 에 저장되어 게이트웨이와 공유된다.
+
+---
+
 ## 4. 태스크 흐름
 
 ### 상태

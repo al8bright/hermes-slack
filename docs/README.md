@@ -68,6 +68,7 @@
 | --- | --- |
 | [`install-souls.sh`](../scripts/install-souls.sh) | `roles/*.md` → 각 프로필 `SOUL.md` 설치 |
 | [`set-models.sh`](../scripts/set-models.sh) | [`config/models.conf`](../config/models.conf) 대로 역할별 모델 배정 |
+| [`set-descriptions.sh`](../scripts/set-descriptions.sh) | [`config/descriptions.conf`](../config/descriptions.conf) 대로 프로필 설명 설정 — **decomposer 라우팅의 전제** |
 | [`ask-team.sh`](../scripts/ask-team.sh) | 여러 역할에 병렬 질의 · 취합 · Lucas 종합 |
 
 ## 확정 사항
@@ -101,4 +102,4 @@
 3. **`temperature` 프로필별 지정 가능 여부** — 가능하면 성향을 수치로도 반영한다.
 4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([gateway-slack.md](./gateway-slack.md)).
 5. **`AGENTS.md` 컨텍스트 잘림** — `74568 chars exceeds limit of 65280` 경고. `context_file_max_chars` 를 올리거나 파일을 줄여야 한다.
-6. **워커에 `SOUL.md` 페르소나가 실리는가** — 첫 실행에서 `lucas` 워커가 자기를 "AI 엔지니어"라고 소개했고(Tech Lead 아님), 분해 지침도 따르지 않았다. `bateam`·`lucas`·`grace` 가 번들 스킬 opt-out 상태(`kanban-worker` 스킬 미로드)인 것과 관련이 있을 수 있다. `hermes -p <id> skills opt-in --sync` 후 재확인 필요.
+6. **`lucas` 만 페르소나가 적용되지 않는다** — `grace`(chat)·`mia`(워커)는 `SOUL.md` 가 정상 반영되는데 `lucas` 만 일반 Hermes 어시스턴트로 답한다. 작업 디렉터리·설정·스킬은 모두 배제됐고, 남은 차이는 **모델(`gpt-5.6-sol`)** 뿐이다. `lucas config set model.default gpt-5.6-terra` 로 검증 중.
