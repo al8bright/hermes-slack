@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# 편집기
+.vscode/
+.idea/
+*.swp
+*~
+
+# 자격증명 — Hermes 프로필의 .env 를 이 저장소로 복사하지 말 것
+.env
+.env.*
+*.key
+*.pem
+auth.json
