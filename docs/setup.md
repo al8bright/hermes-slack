@@ -187,16 +187,43 @@ Grace가 "예외 상황도 정의해야 합니다" 류의 반응을 보이고 �
 
 ## 5. 역할별 모델 배정
 
-### 5.1 명령 형태
+### 5.1 명령 형태 — ⚠ `model` 이 아니라 `model.default`
 
-프로필별 모델은 `config set` 으로 바꾼다. 별칭을 쓰거나 `-p` 플래그를 쓴다.
+`model` 은 스칼라가 아니라 딕셔너리다.
 
-```bash
-lucas config set model gpt-5.6-sol        # 별칭
-hermes -p lucas config set model gpt-5.6-sol   # 동일
+```
+Model: {'default': 'gpt-5.6-terra', 'provider': 'openai-codex', 'base_url': 'https://chatgpt.com/backend-api/codex'}
 ```
 
-> 키는 `model` 이다. `hermes config set` 을 값 없이 실행하면 usage가 출력되는데, **키가 틀린 게 아니라 값이 빠진 것**이다.
+여기에 `config set model gpt-5.6-sol` 을 하면 **딕셔너리 전체가 문자열로 덮여** `provider` 와 `base_url` 이 사라진다. 그 프로필은 다음 호출부터 이렇게 죽는다.
+
+```
+It looks like Hermes isn't configured yet -- no API keys or providers found.
+```
+
+반드시 하위 키를 지정한다.
+
+```bash
+lucas config set model.default gpt-5.6-sol          # 별칭
+hermes -p lucas config set model.default gpt-5.6-sol   # 동일
+```
+
+> `hermes config set` 의 usage 예시는 `hermes config set model anthropic/claude-sonnet-4` 인데, 이건 값에 `공급사/모델` 형태가 들어가 Hermes가 provider를 추론할 수 있을 때만 안전하다. `gpt-5.6-terra` 처럼 공급사 접두어 없는 값에는 쓰면 안 된다.
+
+### 5.1.1 이미 깨진 프로필 복구
+
+```bash
+./scripts/set-models.sh --with-provider
+```
+
+`config/models.conf` 의 `@provider` · `@base_url` 값으로 `model.provider` 와 `model.base_url` 을 되살린다. 값이 맞는지는 손대지 않은 프로필에서 확인한다.
+
+```bash
+bateam config | grep -A1 "◆ Model"    # 템플릿 — 정상 형태
+brian  config | grep -A1 "◆ Model"    # 문자열로 보이면 깨진 것
+```
+
+> `hermes setup` 은 **현재 기본 프로필**(`hermes profile list` 의 `◆` 표시)을 설정한다. `brian` 을 고치려면 `brian setup` 또는 `hermes -p brian setup` 이어야 한다.
 
 ### 5.2 선택 가능한 모델 확인이 먼저다
 
@@ -253,7 +280,7 @@ vim config/models.conf                  # 배정 수정
 `hermes profile list` 는 **설정된 값**만 보여준다. 인증이 없으면 여기선 멀쩡해 보이고 실제 대화에서 실패한다. 전 프로필을 한 번씩 호출해 확인한다.
 
 ```bash
-for id in $(awk '!/^#/ && NF {print $1}' config/models.conf); do
+for id in $(awk '!/^#/ && $1!~/^@/ && NF {print $1}' config/models.conf); do
   printf '%-8s ' "$id"
   hermes -p "$id" chat -q '1+1은?' 2>&1 | tail -1
 done
