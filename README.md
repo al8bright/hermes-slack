@@ -1,6 +1,6 @@
 # hermes-slack
 
-역할과 성향을 분리한 **10인 가상 개발팀(BA Team)** 을 [Hermes Agent](https://hermes-agent.nousresearch.com/docs/) 위에 프로필 10개로 구성하고, 역할별 개별 대화로 협업시키기 위한 저장소다.
+역할과 성향을 분리한 **10인 가상 개발팀(BA Team)** 을 [Hermes Agent](https://hermes-agent.nousresearch.com/docs/) 위에 프로필 10개로 구성하고, Kanban 보드로 협업시키기 위한 저장소다.
 
 이 저장소는 **페르소나 정의와 구축 문서**를 담는다. 실행 코드는 없다 — Hermes Agent가 런타임을 전부 제공한다.
 
@@ -12,7 +12,8 @@
 roles/          페르소나 정의 10개 → 각 Hermes 프로필의 SOUL.md 원본
 docs/           구축·운영 문서
   ├ setup.md            프로필 10개 생성 절차
-  ├ team-workflow.md    역할별 개별 대화로 팀 운영
+  ├ kanban-workflow.md  Kanban 보드 협업
+  ├ team-workflow.md    역할별 개별 대화 (가벼운 질의)
   ├ gateway-slack.md    Slack 연동 전략
   └ archive/            보류·폐기된 설계
 scripts/        install-souls.sh · set-models.sh · ask-team.sh
@@ -37,9 +38,9 @@ ai-development-team.md  팀 구성 원안
 
 **Hermes에서 프로필 = 에이전트 1개 = `SOUL.md` 1개 = 모델 1개다.** 따라서 역할 10개는 프로필 10개가 된다. 하나의 프로필 안에 여러 페르소나를 두는 구조는 제품이 지원하지 않는다.
 
-역할 간 협업은 **사람이 조율한다.** Lucas가 분해안을 내고, `scripts/ask-team.sh` 가 여러 역할에 병렬 질의해 답을 모으고, Lucas가 종합한다.
+역할 간 협업은 **Kanban 보드**가 담당한다. 태스크의 `--assignee` 가 프로필명이고, 디스패처가 해당 프로필을 워커로 기동한다 — [docs/kanban-workflow.md](./docs/kanban-workflow.md).
 
-Hermes의 Kanban 보드로 자동화하는 방식을 먼저 시도했으나 v0.19.0에서 워커에게 `kanban_*` 툴이 노출되지 않아 보류했다 — [docs/archive/kanban-workflow.md](./docs/archive/kanban-workflow.md).
+가벼운 질의에는 `scripts/ask-team.sh` 로 여러 역할에 직접 물어보는 편이 빠르다 — [docs/team-workflow.md](./docs/team-workflow.md).
 
 ## 맥에서 시작하기
 

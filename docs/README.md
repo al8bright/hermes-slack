@@ -1,6 +1,6 @@
 # BA Team on Hermes Agent
 
-[`roles/`](../roles/) 에 정의한 10인 가상 개발팀을 [Hermes Agent](https://hermes-agent.nousresearch.com/docs/) 위에 **프로필 10개**로 구성하고, 역할별 개별 대화로 협업시키는 구성 문서다.
+[`roles/`](../roles/) 에 정의한 10인 가상 개발팀을 [Hermes Agent](https://hermes-agent.nousresearch.com/docs/) 위에 **프로필 10개**로 구성하고, **Kanban 보드**로 협업시키는 구성 문서다.
 
 ---
 
@@ -28,40 +28,39 @@
 
 각 프로필은 자기 `config.yaml`·`.env`·`SOUL.md`·`skills/`·`sessions/`·`memories/` 를 따로 가진다.
 
-## 협업 방식 — 역할별 개별 대화
+## 협업 방식 — Kanban
+
+역할 간 협업은 [Kanban 보드](https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban)가 담당한다. **태스크의 `--assignee` 가 프로필명**이고, 디스패처가 해당 프로필을 워커 프로세스로 기동한다. 역할 이름을 프로필 이름으로 쓴 이유가 여기 있다.
 
 ```
-        사람
-         │
-    ① 안건 제시            ./scripts/ask-team.sh --plan "..."
-         ▼
-   ┌──────────┐
-   │  lucas   │  분해안: 누구에게 무엇을 물을지
-   └────┬─────┘
-        │ ② 병렬 질의       ./scripts/ask-team.sh --roles jack,mia,leo "..."
-   ┌────┴────┬────────┬────────┐
-   ▼         ▼        ▼        ▼
- jack      mia      leo     oscar     ← 각자 자기 관점으로만 답변
-   └────┬────┴────────┴────────┘
-        │ ③ 종합            --synthesize
-        ▼
-   ┌──────────┐
-   │  lucas   │  충돌 정리 · 결정
-   └──────────┘
+사람  ──▶  hermes kanban create "..." --assignee lucas
+             │
+             ▼
+        lucas 게이트웨이 (디스패처 내장 · 60초 tick)
+             │  ready 태스크 claim → assignee 프로필을 워커로 spawn
+             │  부모 완료 시 자식을 todo → ready 승격
+             ▼
+   ┌─────────┼─────────┬─────────┐
+   ▼         ▼         ▼         ▼
+ jack      mia       leo      oscar    ← 각자 kanban_show() 로 시작, kanban_complete() 로 인계
+   └─────────┴────┬────┴─────────┘
+                  ▼
+                lucas  ← 종합 (자식들의 summary·metadata 자동 전달)
 ```
 
-결과는 `reviews/<타임스탬프>-<슬러그>/` 에 역할별 파일로 남는다. 상세는 [team-workflow.md](./team-workflow.md).
+상세는 [kanban-workflow.md](./kanban-workflow.md).
 
-> Hermes의 [Kanban 보드](https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban)로 자동 협업시키는 방식을 먼저 시도했으나, v0.19.0에서 **칸반 워커에게 `kanban_*` 툴이 노출되지 않아** 보류했다. 조사 결과와 복귀 조건은 [archive/kanban-workflow.md](./archive/kanban-workflow.md) 상단에 있다.
+가벼운 질의(회의를 열 정도는 아닌 것)에는 [`ask-team.sh`](../scripts/ask-team.sh) 로 여러 역할에 직접 물어보는 편이 빠르다 — [team-workflow.md](./team-workflow.md).
 
 ## 문서
 
 | 문서 | 내용 |
 | --- | --- |
 | [setup.md](./setup.md) | 프로필 10개 생성 · `SOUL.md` 배치 · 모델 배정 — **실행 절차** |
-| [team-workflow.md](./team-workflow.md) | 역할별 개별 대화로 팀을 운영하는 방법 |
+| [kanban-workflow.md](./kanban-workflow.md) | Kanban 보드 협업 — 보드 구성 · 오케스트레이터 · 태스크 흐름 |
+| [team-workflow.md](./team-workflow.md) | 역할별 개별 대화 (칸반 없이 가볍게 물을 때) |
 | [gateway-slack.md](./gateway-slack.md) | Slack 연동 전략과 선택지 |
-| [archive/](./archive/) | 보류·폐기된 설계 (칸반 방식, 초기 자체구현 설계) |
+| [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) |
 
 ## 스크립트
 
@@ -78,8 +77,8 @@
 | 역할 = 프로필 | 프로필 10개 | 프로필당 `SOUL.md`·모델이 하나뿐이므로 역할별 모델 차등의 유일한 방법 |
 | 페르소나 | `roles/*.md` → 각 프로필 `SOUL.md` | `SOUL.md` 가 시스템 프롬프트 슬롯 #1 |
 | 템플릿 | `bateam` 프로필에서 `--clone-from` | Codex 인증·스킬·터미널 백엔드를 상속 |
-| 협업 | 역할별 개별 대화 + `ask-team.sh` | 칸반 워커 툴 노출 문제로 보류 |
-| 조율자 | `lucas` | 분해안 제시와 종합을 맡는다. 검토 대상에서는 제외 |
+| 협업 | Kanban 보드 (slug `bateam`) | `assignee` = 프로필명. 동작 확인됨 |
+| 조율자 | `lucas` | 분해와 종합. `kanban.orchestrator_profile` |
 | 게이트웨이 | `lucas` 1개 | Slack 앱 1개 |
 | `default` 프로필 | 건드리지 않음 | — |
 
@@ -93,7 +92,7 @@
 | `hermes setup` | 현재 기본 프로필(`◆`)을 설정한다. 특정 프로필은 `<alias> setup` |
 | `kanban.*` 설정 | 전역 `~/.hermes/config.yaml` 과 프로필 `config.yaml` 양쪽에 쓸 수 있다 |
 | 칸반 보드 DB | 보드마다 별도 파일 (`~/.hermes/kanban/boards/<slug>/kanban.db`) |
-| 칸반 워커 툴 | **노출되지 않음** — nudge는 뜨는데 툴이 없다. 제품 불일치로 보임 |
+| 칸반 워커 툴 | **정상 동작.** 단 `hermes chat` + `HERMES_KANBAN_TASK` 로는 검증되지 않는다 — chat 모드와 디스패처 spawn 경로의 툴 등록이 다르다. 실제 태스크를 dispatch 해서 `kanban show <id>` 이벤트로 확인할 것 |
 
 ## 미결 사항
 
@@ -102,3 +101,4 @@
 3. **`temperature` 프로필별 지정 가능 여부** — 가능하면 성향을 수치로도 반영한다.
 4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([gateway-slack.md](./gateway-slack.md)).
 5. **`AGENTS.md` 컨텍스트 잘림** — `74568 chars exceeds limit of 65280` 경고. `context_file_max_chars` 를 올리거나 파일을 줄여야 한다.
+6. **워커에 `SOUL.md` 페르소나가 실리는가** — 첫 실행에서 `lucas` 워커가 자기를 "AI 엔지니어"라고 소개했고(Tech Lead 아님), 분해 지침도 따르지 않았다. `bateam`·`lucas`·`grace` 가 번들 스킬 opt-out 상태(`kanban-worker` 스킬 미로드)인 것과 관련이 있을 수 있다. `hermes -p <id> skills opt-in --sync` 후 재확인 필요.
