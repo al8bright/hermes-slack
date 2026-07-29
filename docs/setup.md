@@ -187,35 +187,77 @@ Grace가 "예외 상황도 정의해야 합니다" 류의 반응을 보이고 �
 
 ## 5. 역할별 모델 배정
 
-```bash
-lucas config set model.default <provider/model>
-```
+### 5.1 명령 형태
 
-### ⚠ 현재 제약
-
-인증된 공급사가 **OpenAI Codex 하나**다. 역할별로 다른 모델을 실제로 쓰려면 먼저 선택지를 확인해야 한다.
+프로필별 모델은 `config set` 으로 바꾼다. 별칭을 쓰거나 `-p` 플래그를 쓴다.
 
 ```bash
-hermes model            # 공급사·모델 선택 마법사 (세션 밖에서 실행)
-hermes setup model
+lucas config set model gpt-5.6-sol        # 별칭
+hermes -p lucas config set model gpt-5.6-sol   # 동일
 ```
 
-Codex가 제공하는 모델이 여러 개면 성향에 맞춰 나누고, 하나뿐이면 **일단 전부 `gpt-5.6-terra` 로 통일하고 넘어간다.** 페르소나 차이만으로도 역할 구분은 충분히 동작한다. 모델 차등은 나중에 공급사를 추가한 뒤 `config set` 한 줄로 바꿀 수 있다.
+> 키는 `model` 이다. `hermes config set` 을 값 없이 실행하면 usage가 출력되는데, **키가 틀린 게 아니라 값이 빠진 것**이다.
 
-### 배정 의도 (공급사 확보 후 적용)
+### 5.2 선택 가능한 모델 확인이 먼저다
 
-| 프로필 | 성향 | 필요 특성 |
+```bash
+hermes model            # 공급사·모델 선택 마법사 — 목록이 여기서 보인다
+hermes profile list     # 현재 배정 상태
+```
+
+**인증된 공급사가 OpenAI Codex 하나면 선택지가 `gpt-5.6-terra` / `gpt-5.6-sol` 정도로 제한된다.** 역할 10개를 실제로 다르게 배정하려면 공급사를 늘려야 한다.
+
+```bash
+hermes setup model      # Anthropic · OpenRouter · Copilot · Nous Portal 추가
+```
+
+**OpenRouter를 권한다.** API 키 하나로 여러 공급사의 모델에 접근할 수 있어, 10개 역할에 서로 다른 모델을 물리기가 가장 쉽다. Anthropic·OpenAI를 개별 계약하는 것보다 초기 구성이 빠르다.
+
+> ⚠ **인증 없이 모델만 바꾸면 설정은 되지만 호출에서 실패한다.** 공급사를 먼저 붙이고 모델을 배정할 것.
+
+### 5.3 배정 적용
+
+10개를 매번 손으로 치지 않도록 [`config/models.conf`](../config/models.conf) 에 배정을 적고 스크립트로 적용한다.
+
+```
+# config/models.conf
+lucas   gpt-5.6-terra
+grace   gpt-5.6-terra
+...
+```
+
+```bash
+vim config/models.conf                  # 배정 수정
+./scripts/set-models.sh --dry-run       # 실행될 명령 확인
+./scripts/set-models.sh                 # 적용
+./scripts/set-models.sh --only mia      # 한 명만
+```
+
+`config/models.conf` 상단에 역할별로 **어떤 특성이 필요한지** 주석으로 적어뒀다. 실제 모델명은 사용 가능한 것 중에서 고른다.
+
+| 프로필 | 필요 특성 | 이유 |
 | --- | --- | --- |
-| `lucas` | 균형형 · 조율자 | 추론력 최상위 — 최종 결정과 태스크 분해 |
-| `grace` | 보수적 · 정책 중심 | 일관성 · 누락 없는 열거 |
-| `brian` | 진보적 · 기술 혁신 | 코드 강점 |
-| `emma` | 창의적 · UX 중심 | 발산적 |
-| `mia` | 보수적 · 검증 중심 | 결정성 최우선 |
-| `leo` | 현실주의 · 자동화 | 절차·스크립트 정확성 |
-| `david` | 객관적 · 데이터 | 수치·표 처리 |
-| `aiden` | 실험적 · 미래 지향 | 최신 모델 |
-| `jack` | 매우 보수적 · 위험 회피 | 일관성 |
-| `oscar` | 회의적 · 반증 중심 | 반론 생성 · 긴 맥락 |
+| `lucas` | 추론력 최상위 | 최종 결정과 태스크 분해. 가장 좋은 모델을 준다 |
+| `grace` | 일관성 · 열거 | 예외 상황을 빠짐없이 나열해야 한다 |
+| `brian` | 코드 강점 | 구현 방식과 성능 근거 |
+| `emma` | 발산적 | 새 UI·경험 안을 여러 개 내야 한다 |
+| `mia` | 결정성 최우선 | 같은 입력에 같은 판정. 흔들리면 QA가 아니다 |
+| `leo` | 절차 정확성 | 배포·롤백 순서를 틀리면 안 된다 |
+| `david` | 수치 · 표 처리 | 계산이 틀리면 근거가 무너진다 |
+| `aiden` | 최신 모델 | 새 기술을 다루는 역할이므로 |
+| `jack` | 일관성 | 보안 판단은 매번 같아야 한다 |
+| `oscar` | 반론 생성 · 긴 맥락 | 검토되지 않은 각도를 끌어내야 한다 |
+
+### 5.4 검증 — 설정과 실제 호출은 다르다
+
+`hermes profile list` 는 **설정된 값**만 보여준다. 인증이 없으면 여기선 멀쩡해 보이고 실제 대화에서 실패한다. 전 프로필을 한 번씩 호출해 확인한다.
+
+```bash
+for id in $(awk '!/^#/ && NF {print $1}' config/models.conf); do
+  printf '%-8s ' "$id"
+  hermes -p "$id" chat -q '1+1은?' 2>&1 | tail -1
+done
+```
 
 > **미결** — 프로필별 `temperature` 지정이 가능한지 확인 필요. 가능하면 Mia 0.1 / Oscar 0.7 처럼 성향을 수치로도 반영한다. 불가하면 `SOUL.md` 서술로만 표현한다. `hermes config` 출력에서 샘플링 관련 키를 찾아볼 것.
 
