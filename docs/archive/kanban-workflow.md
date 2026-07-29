@@ -1,3 +1,51 @@
+> ## ⚠ 보류 — 이 방식은 현재 동작하지 않는다 (2026-07-29)
+>
+> Hermes v0.19.0 실측 결과 **칸반 워커에게 `kanban_*` 툴이 노출되지 않아** 이 워크플로를 쓸 수 없다.
+> 현행 운영 방식은 [`team-workflow.md`](../team-workflow.md) 를 볼 것.
+>
+> ### 확인된 사실 (재시도 시 출발점)
+>
+> **게이트 함수** — `tools/kanban_tools.py`
+>
+> ```python
+> def _profile_has_kanban_toolset() -> bool:
+>     toolsets = cfg.get("toolsets", [])      # load_config() → $HERMES_HOME/config.yaml
+>     return "kanban" in toolsets
+>
+> def _check_kanban_mode():                   # show·complete·block·heartbeat·comment·create·link·attach*
+>     if _is_delegated_child_context(): return False
+>     if os.environ.get("HERMES_KANBAN_TASK"): return True
+>     return _profile_has_kanban_toolset()
+>
+> def _check_kanban_orchestrator_mode():      # list·unblock — 워커에게는 의도적으로 숨김
+>     if _is_delegated_child_context(): return False
+>     if os.environ.get("HERMES_KANBAN_TASK"): return False
+>     return _profile_has_kanban_toolset()
+> ```
+>
+> **툴 12개** — `kanban_show` `list` `complete` `block` `heartbeat` `comment` `create` `link` `unblock` `attach` `attach_url` `attachments`.
+> `list`·`unblock` 만 오케스트레이터 전용이고 **`create` 는 워커도 쓸 수 있다** → 팬아웃 설계 자체는 유효했다.
+>
+> **시도했고 전부 실패한 것**
+>
+> | 시도 | 결과 |
+> | --- | --- |
+> | `hermes tools enable kanban` | `Unknown toolset 'kanban'` — 대화형 UI 목록에 kanban이 없음 |
+> | 프로필 `config.yaml` 에 `toolsets: [hermes-cli, kanban]` | 변화 없음 |
+> | 프로필 `platform_toolsets.cli` 에 `- kanban` 추가 | 변화 없음 |
+> | 루트 `~/.hermes/config.yaml` 에 `toolsets: [hermes-cli, kanban]` | 변화 없음 (테스트 픽스처가 쓰는 경로인데도) |
+>
+> `toolsets.py:263` 에 `"kanban"` 이 정식 등록되어 있고 origin도 NousResearch 본체가 맞다. 버전 문제가 아니다.
+>
+> **불일치 지점** — 워커 모드에서 nudge(`Kanban worker tried to exit without kanban_complete/kanban_block`)는
+> 뜨는데 정작 그 툴이 스키마에 없다. 요구하는 툴을 제공하지 않는 상태이므로 제품 버그로 보인다.
+> 이슈로 올릴 만하고, 재현 절차는 위 표가 전부다.
+>
+> **정상 동작한 것** — 보드 생성, 태스크 생성/배정, 디스패처 spawn, `max_in_progress_per_profile` cap,
+> 크래시 워커 회수. 툴 노출 한 지점만 막혔다.
+>
+> ---
+>
 # Kanban 협업 운영
 
 > 상위 문서: [README.md](./README.md) · 선행: [setup.md](./setup.md)
