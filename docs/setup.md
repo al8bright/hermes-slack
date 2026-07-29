@@ -127,91 +127,61 @@ done
 ---
 
 ## 4. `SOUL.md` 배치
-
 각 프로필의 `SOUL.md` 가 시스템 프롬프트 **슬롯 #1**, 즉 그 에이전트의 정체성이다. `roles/*.md` 를 여기에 넣는다.
 
+**`roles/*.md` 를 그대로 복사하면 안 된다.** 사람이 읽는 문서로 썼기 때문에 세 가지를 손봐야 한다.
+
+| 문제 | 처리 |
+| --- | --- |
+| YAML 프론트매터가 시스템 프롬프트에 섞임 | 제거 |
+| `[Brian](./brian-backend.md)` 상대 링크가 프로필 디렉터리에서 깨짐 | 링크 평탄화 → `Brian` |
+| 팀의 일원이라는 것과 Kanban 사용법을 모름 | `roles/_team.md` 를 덧붙임 (lucas 에겐 `_orchestrator.md` 추가) |
+
+이걸 매번 손으로 하면 역할을 다듬을 때마다 10번 반복해야 한다. 스크립트로 처리한다.
+
 ```bash
-declare -A SOUL=(
-  [lucas]=lucas-tech-lead.md
-  [grace]=grace-business-analyst.md
-  [brian]=brian-backend.md
-  [emma]=emma-frontend.md
-  [mia]=mia-qa.md
-  [leo]=leo-devops.md
-  [david]=david-data-analyst.md
-  [aiden]=aiden-ai-engineer.md
-  [jack]=jack-security.md
-  [oscar]=oscar-devils-advocate.md
-)
-
-for id in "${(@k)SOUL}"; do
-  cp "$BATEAM_SRC/roles/${SOUL[$id]}" ~/.hermes/profiles/$id/SOUL.md
-done
+cd ~/dev/hermes-slack        # 저장소 위치
+./scripts/install-souls.sh --dry-run    # 무엇이 쓰일지 먼저 확인
+./scripts/install-souls.sh              # 설치
 ```
 
-> zsh 기준이다. bash면 `"${!SOUL[@]}"` 로 바꾼다.
+```
+저장소:   /Users/ethan/dev/hermes-slack
+프로필:   /Users/ethan/.hermes/profiles
 
-### 그대로 복사하면 안 되는 부분
+  ✓ lucas  →  /Users/ethan/.hermes/profiles/lucas/SOUL.md  (4821 bytes) (+ 오케스트레이터 지침)
+  ✓ grace  →  /Users/ethan/.hermes/profiles/grace/SOUL.md  (3204 bytes)
+  … 10개
 
-`roles/*.md` 는 사람이 읽는 문서로 썼기 때문에 두 군데를 손봐야 한다.
-
-**① 상대 링크가 깨진다.** `[Brian](./brian-backend.md)` 같은 링크는 프로필 디렉터리에서 의미가 없다. 이름만 남기거나 프로필명으로 바꾼다.
-
-**② 팀 협업 지침이 없다.** 각 에이전트는 자기가 팀의 일원이고, Kanban으로 일을 주고받는다는 걸 알아야 한다. 아래를 `SOUL.md` 끝에 공통으로 덧붙인다.
-
-```markdown
----
-
-## 팀
-
-너는 BA Team의 일원이다. 동료는 다음과 같고, 각자 프로필 이름으로 호출된다.
-
-| 프로필 | 역할 | 성향 |
-| --- | --- | --- |
-| lucas | Tech Lead | 균형형 · 조율자 · 최종 결정 |
-| grace | BA | 보수적 · 정책 중심 |
-| brian | Backend | 진보적 · 기술 혁신 |
-| emma | Frontend / UX | 창의적 · 사용자 경험 중심 |
-| mia | QA | 보수적 · 검증 중심 |
-| leo | DevOps | 현실주의 · 자동화 중심 |
-| david | Data | 객관적 · 데이터 중심 |
-| aiden | AI | 실험적 · 미래 지향 |
-| jack | Security | 매우 보수적 · 위험 회피 |
-| oscar | Critic | 회의적 · 반증 중심 |
-
-## 일하는 방식
-
-- 태스크는 Kanban 보드로 오간다. `kanban_show()` 로 현재 태스크를 읽고 시작한다.
-- 네 역할 밖의 일이면 직접 하지 말고 `kanban_create(assignee="<프로필>")` 로 담당자에게 넘긴다.
-- 다른 역할의 결과를 기다려야 하면 `kanban_block(reason=..., kind="dependency")` 를 쓴다.
-- 오래 걸리는 작업 중에는 `kanban_heartbeat()` 로 살아있음을 알린다.
-- 끝나면 `kanban_complete(summary=..., metadata=...)` 로 인계한다. summary는 다음 담당자가 읽는다.
-- 최종 결정은 lucas가 내린다. 네 의견을 분명히 내되 결정을 대신하지 않는다.
+설치 완료 — 10개, 건너뜀 0개
 ```
 
-**Lucas의 `SOUL.md` 에는 추가로** 오케스트레이터 역할을 명시한다.
+기존 `SOUL.md`(템플릿에서 상속된 것)는 `SOUL.md.bak` 으로 백업된다.
 
-```markdown
-## 오케스트레이터로서
+> **`$BATEAM_SRC` 같은 환경변수가 필요 없다.** 스크립트가 자기 위치로 저장소 루트를 찾는다. 이전 절차에서 `cp: /roles/...: No such file or directory` 가 났다면 그 변수가 비어 있었던 것이다.
 
-큰 요청을 받으면 직접 처리하지 말고 역할별로 쪼개 배정한다.
+### 페르소나를 고칠 때
 
-kanban_create(title="보안 검토", assignee="jack", ...)
-kanban_create(title="테스트 전략", assignee="mia", ...)
-kanban_create(title="종합 판단", assignee="lucas", parents=[위 두 개])
+`roles/*.md` 를 수정하고 스크립트를 다시 돌리면 된다. 한 명만 바꿀 수도 있다.
 
-배정 기준은 성향이다. 리스크 판단은 jack, 검증은 mia, 정책은 grace,
-반박이 필요하면 oscar 를 반드시 포함시킨다.
+```bash
+vim roles/grace-business-analyst.md
+./scripts/install-souls.sh --only grace
 ```
+
+팀 공통 지침(동료 목록·Kanban 사용법)은 `roles/_team.md`, Lucas의 오케스트레이터 지침은 `roles/_orchestrator.md` 에 있다. 이 둘을 고치면 전원에게 반영된다.
 
 ### 검증
 
 ```bash
-head -20 ~/.hermes/profiles/grace/SOUL.md
-grace chat -q "너는 누구고 무슨 일을 하지?"
+head -20 ~/.hermes/profiles/grace/SOUL.md    # 프론트매터가 사라졌는지
+tail -40 ~/.hermes/profiles/lucas/SOUL.md    # 오케스트레이터 지침이 붙었는지
+grep -c "](\./" ~/.hermes/profiles/*/SOUL.md # 링크 평탄화 확인 — 전부 0 이어야 한다
+
+grace chat -q "너는 누구고 팀에서 무슨 일을 하지?"
 ```
 
-Grace가 "예외 상황도 정의해야 합니다" 류의 반응을 보이면 페르소나가 먹은 것이다.
+Grace가 "예외 상황도 정의해야 합니다" 류의 반응을 보이고 동료 이름을 알고 있으면 페르소나가 먹은 것이다.
 
 ---
 
