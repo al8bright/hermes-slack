@@ -352,5 +352,6 @@ tail -f ~/.hermes/profiles/lucas/logs/gateway.log
 
 ## 다음
 
+- **Slack에서 쓰는 법: [slack-usage.md](./slack-usage.md)**
 - 게이트웨이 전략과 선택지: [gateway-slack.md](./gateway-slack.md)
 - 보드 운영: [kanban-workflow.md](./kanban-workflow.md)

@@ -14,6 +14,7 @@ docs/           구축·운영 문서
   ├ setup.md            프로필 10개 생성 절차
   ├ kanban-workflow.md  Kanban 보드 협업
   ├ team-workflow.md    역할별 개별 대화 (가벼운 질의)
+  ├ slack-usage.md      Slack에서 쓰는 법
   ├ slack-setup.md      Slack 앱 발급 · 권한 · 토큰 (실행 절차)
   ├ gateway-slack.md    Slack 연동 전략
   └ archive/            보류·폐기된 설계
@@ -87,6 +88,15 @@ done
 # 개별 대화
 grace chat
 jack  chat -q "외부 결제 API를 붙이려 한다"
+```
+
+Slack에서는 이렇게 쓴다 — [`docs/slack-usage.md`](./docs/slack-usage.md).
+
+```
+@BA Team FastAPI가 Flask보다 항상 빠른가요?          대화 (Lucas 응답)
+/kanban create "결제에 외부 PG를 추가하려 한다"       회의 (자동 분해 → 종합)
+/kanban create "권한 모델 검토해줘" --assignee jack   특정 역할만
+/kanban list                                        현황
 ```
 
 결과는 `reviews/<타임스탬프>-<슬러그>/` 에 역할별 파일로 남는다. 상세는 [`docs/team-workflow.md`](./docs/team-workflow.md).

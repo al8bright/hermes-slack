@@ -59,7 +59,8 @@
 | [setup.md](./setup.md) | 프로필 10개 생성 · `SOUL.md` 배치 · 모델 배정 — **실행 절차** |
 | [kanban-workflow.md](./kanban-workflow.md) | Kanban 보드 협업 — 보드 구성 · 오케스트레이터 · 태스크 흐름 |
 | [team-workflow.md](./team-workflow.md) | 역할별 개별 대화 (칸반 없이 가볍게 물을 때) |
-| [slack-setup.md](./slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 — **실행 절차** |
+| [slack-usage.md](./slack-usage.md) | **Slack에서 쓰는 법** — 대화 · 회의 · 역할 지목 · 진행 관리 |
+| [slack-setup.md](./slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 — 실행 절차 |
 | [gateway-slack.md](./gateway-slack.md) | Slack 연동 전략과 선택지 (앱을 몇 개 둘 것인가) |
 | [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) |
 
