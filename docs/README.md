@@ -64,9 +64,10 @@
 | **04** | [slack-setup](./04-slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 | Slack에서 봇이 응답한다 |
 | **05** | [slack-usage](./05-slack-usage.md) | **Slack에서 쓰는 법** — 대화 · 회의 · 역할 지목 · 진행 관리 | 일상 사용 |
 | **06** | [team-workflow](./06-team-workflow.md) | 보조 — 터미널에서 여러 역할에 직접 질의 | 칸반을 열 정도가 아닐 때 |
+| **07** | [notion](./07-notion.md) | Notion 연동 — 회의록 자동 기록 · 매일 03시 일일 요약 | 회의가 끝나면 Notion에 남는다 |
 | — | [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) | — |
 
-**01~02 는 필수**다. 여기까지면 터미널에서 팀이 완전히 돌아간다. **03~04 는 Slack을 쓸 때만** 필요하고, **06 은 선택**이다.
+**01~02 는 필수**다. 여기까지면 터미널에서 팀이 완전히 돌아간다. **03~05 는 Slack을 쓸 때만** 필요하고, **06~07 은 선택**이다.
 
 ## 스크립트
 
@@ -75,6 +76,7 @@
 | [`install-souls.sh`](../scripts/install-souls.sh) | `roles/*.md` → 각 프로필 `SOUL.md` 설치 |
 | [`set-models.sh`](../scripts/set-models.sh) | [`config/models.conf`](../config/models.conf) 대로 역할별 모델 배정 |
 | [`set-descriptions.sh`](../scripts/set-descriptions.sh) | [`config/descriptions.conf`](../config/descriptions.conf) 대로 프로필 설명 설정 — **decomposer 라우팅의 전제** |
+| [`install-skills.sh`](../scripts/install-skills.sh) | [`skills/`](../skills/) 의 커스텀 스킬을 프로필에 설치 |
 | [`ask-team.sh`](../scripts/ask-team.sh) | 여러 역할에 병렬 질의 · 취합 · Lucas 종합 |
 
 ## 확정 사항

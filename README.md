@@ -215,7 +215,12 @@ scripts/
   ├ install-souls.sh       roles/*.md → 각 프로필 SOUL.md
   ├ set-models.sh          models.conf 적용
   ├ set-descriptions.sh    descriptions.conf 적용
+  ├ install-skills.sh      skills/ → 각 프로필 skills/
   └ ask-team.sh            여러 역할에 병렬 질의 · 취합 · 종합
+
+skills/
+  ├ meeting-note/          회의 종료 시 Notion 회의록 작성
+  └ daily-log/             매일 새벽 Notion 일일 요약
 
 docs/                      번호 순서대로 진행한다
   ├ 01-setup.md            프로필 10개 생성 · SOUL.md · 모델          [필수]
@@ -224,6 +229,7 @@ docs/                      번호 순서대로 진행한다
   ├ 04-slack-setup.md      Slack 앱 발급 · 권한 · 토큰                [Slack]
   ├ 05-slack-usage.md      Slack에서 쓰는 법                         [Slack]
   ├ 06-team-workflow.md    보조 — 터미널에서 여러 역할에 직접 질의     [선택]
+  ├ 07-notion.md           Notion 연동 — 회의록 · 일일 요약           [선택]
   └ archive/               폐기된 초기 설계
 ```
 
