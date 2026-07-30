@@ -46,6 +46,36 @@ Lucas가 Tech Lead 페르소나로 답한다. **보드에 기록이 남지 않�
 
 > **가벼운 질문을 태스크로 만들지 말 것.** `/kanban create` 로 만들면 6개로 분해되어 역할별 검토가 돌아간다. 한 줄 답이면 되는 질문에는 낭비다.
 
+### ⚠ 대화로는 특정 역할을 직접 부를 수 없다
+
+게이트웨이가 `lucas` 하나뿐이므로 **DM·멘션은 전부 Lucas에게 간다.** Grace나 Jack에게 직접 말을 거는 방법은 없다. 앱 1개 전략([gateway-slack.md](./gateway-slack.md))의 대가다.
+
+대안은 셋이다.
+
+| 방법 | 상태 | 비고 |
+| --- | --- | --- |
+| `/kanban create "..." --assignee jack` | ✅ 바로 됨 | 결과가 보드에 남아 되짚을 수 있다 |
+| Lucas에게 중계 요청 | ⚠ 미검증 | 아래 참조 |
+| 그 역할만 별도 Slack 앱 | 가능하나 제약 있음 | 아래 참조 |
+
+**중계 요청** — `@BA Team 이건 보안 쪽 같은데 Jack에게 물어봐줘` 로 Lucas가 `kanban_create(assignee="jack")` 을 부르게 하는 그림이다. 대화 모드(디스패처 워커가 아님)에서 kanban 툴을 쓰려면 프로필 설정에 `kanban` 툴셋이 있어야 한다.
+
+```bash
+grep -n -A20 "platform_toolsets" ~/.hermes/profiles/lucas/config.yaml
+```
+
+`platform_toolsets` 는 **플랫폼별로 나뉜다**(`cli` · `slack` · `telegram` …). Slack 대화의 플랫폼은 `slack` 이므로 `platform_toolsets.slack` 에 `- kanban` 을 넣어야 한다. 백업 후 시험하고 `lucas tools --summary` 로 다른 툴이 빠지지 않았는지 확인할 것.
+
+**앱 분리** — 진짜 `@Grace` 멘션과 역할별 DM을 원하면 그 역할용 Slack 앱을 따로 발급한다.
+
+```bash
+grace slack manifest --agent-view --write   # 이름을 "Grace" 로 수정
+grace gateway setup
+grace gateway install && grace gateway start
+```
+
+> ⚠ [issue #59739](https://github.com/NousResearch/hermes-agent/issues/59739) — Slack 어댑터가 `SLACK_APP_TOKEN` 을 프로세스 환경변수에서 읽어, 여러 프로필이 동시에 게이트웨이를 띄우면 전부 기본 프로필의 앱으로 붙는 문제가 보고되어 있다. **두 번째 게이트웨이를 띄우기 전에 이것부터 확인할 것.**
+
 ---
 
 ## 2. 회의 — 팀 전체 검토
