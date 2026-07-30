@@ -59,7 +59,8 @@
 | [setup.md](./setup.md) | 프로필 10개 생성 · `SOUL.md` 배치 · 모델 배정 — **실행 절차** |
 | [kanban-workflow.md](./kanban-workflow.md) | Kanban 보드 협업 — 보드 구성 · 오케스트레이터 · 태스크 흐름 |
 | [team-workflow.md](./team-workflow.md) | 역할별 개별 대화 (칸반 없이 가볍게 물을 때) |
-| [gateway-slack.md](./gateway-slack.md) | Slack 연동 전략과 선택지 |
+| [slack-setup.md](./slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 — **실행 절차** |
+| [gateway-slack.md](./gateway-slack.md) | Slack 연동 전략과 선택지 (앱을 몇 개 둘 것인가) |
 | [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) |
 
 ## 스크립트
@@ -101,7 +102,7 @@
 
 안건 1개 → 역할별 6개 분해 → 병렬 검토 → 의존성 순서 → 종합 결정까지 실제로 돌았다. Oscar의 반박이 Lucas의 결론을 바꾼 것까지 확인했다 — [kanban-workflow.md §5.5](./kanban-workflow.md).
 
-남은 것은 **Slack 게이트웨이 연결**뿐이다 ([gateway-slack.md](./gateway-slack.md)).
+남은 것은 **Slack 게이트웨이 연결**뿐이다 — 절차는 [slack-setup.md](./slack-setup.md), 전략은 [gateway-slack.md](./gateway-slack.md).
 
 ## 미결 사항
 

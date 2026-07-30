@@ -14,6 +14,7 @@ docs/           구축·운영 문서
   ├ setup.md            프로필 10개 생성 절차
   ├ kanban-workflow.md  Kanban 보드 협업
   ├ team-workflow.md    역할별 개별 대화 (가벼운 질의)
+  ├ slack-setup.md      Slack 앱 발급 · 권한 · 토큰 (실행 절차)
   ├ gateway-slack.md    Slack 연동 전략
   └ archive/            보류·폐기된 설계
 scripts/        install-souls.sh · set-models.sh · ask-team.sh

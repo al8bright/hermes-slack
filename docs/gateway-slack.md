@@ -80,23 +80,30 @@ Slack ──▶ [lucas gw + 디스패처]  [grace gw]
 
 ## 4. 구성 절차
 
+**Slack 앱 발급·스코프·이벤트 구독의 상세 절차는 [slack-setup.md](./slack-setup.md) 에 있다.** 여기서는 흐름만 적는다.
+
 ```bash
-# 1. Slack 앱 발급 후 게이트웨이 설정 (대화형)
+# 1. 매니페스트 생성 → api.slack.com 에서 앱 생성
+lucas slack manifest --agent-view --write
+
+# 2. 토큰 등록 (대화형)
 lucas gateway setup
 
-# 2. 동작 확인 (포그라운드)
+# 3. 동작 확인 (포그라운드) — 오류가 바로 보인다
 lucas gateway run
 
-# 3. 정상이면 launchd 서비스로 등록
+# 4. 정상이면 launchd 서비스로 등록
 lucas gateway install
 lucas gateway start
 lucas gateway status
 
-# 4. 전체 프로필 게이트웨이 현황
+# 5. 전체 프로필 게이트웨이 현황
 hermes gateway list
 ```
 
 `gateway run` 으로 먼저 포그라운드 확인을 하는 게 낫다. 바로 `install` 하면 오류가 로그로만 남는다.
+
+> ⚠ **`SLACK_ALLOWED_USERS` 를 설정하지 않으면 게이트웨이가 모든 메시지를 거부한다.** 안전장치이지 버그가 아니다. 봇이 아무 반응이 없을 때 가장 먼저 볼 곳이다.
 
 ### 검증
 
