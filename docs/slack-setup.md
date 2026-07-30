@@ -30,9 +30,47 @@ lucas slack manifest --agent-view --write
 cat ~/.hermes/profiles/lucas/slack-manifest.json
 ```
 
+### ⚠ 이름부터 고친다
+
+매니페스트의 앱 이름은 **`Hermes` 로 하드코딩**되어 있다. `lucas` 프로필로 생성해도 마찬가지이며, `--name` 옵션은 없다(`--long-description` 계열만 있다). **붙여넣기 전에 JSON을 고친다.**
+
+```bash
+MF=~/.hermes/profiles/lucas/slack-manifest.json
+
+python3 - "$MF" <<'PY'
+import json, sys
+p = sys.argv[1]
+NAME = "BA Team"
+DESC = "역할과 성향을 분리한 10인 가상 개발팀"
+
+d = json.load(open(p, encoding="utf-8"))
+d["display_information"]["name"] = NAME
+d["display_information"]["description"] = DESC
+d.setdefault("features", {}).setdefault("bot_user", {})["display_name"] = NAME
+json.dump(d, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+print(f"{p} → {NAME}")
+PY
+```
+
+바뀌는 필드는 셋이다.
+
+| 필드 | 나타나는 곳 |
+| --- | --- |
+| `display_information.name` | 앱 목록 · 설치 화면 |
+| `display_information.description` | 앱 소개 |
+| `features.bot_user.display_name` | **대화창의 발신자 이름 · `@멘션` 대상** |
+
+Slack 제한: 앱 이름 35자, 봇 표시명 80자, 설명 140자.
+
+**이름을 `Lucas` 가 아니라 `BA Team` 으로 하는 이유** — 이 봇 하나가 팀 전체의 출력을 나른다. Lucas의 대화 응답뿐 아니라 Kanban 워커(jack·mia·oscar…)의 완료 통지도 같은 봇으로 나간다. `Lucas` 라고 이름 붙이면 Jack의 보안 검토 결과가 Lucas 이름으로 오게 된다. 대화 상대가 누구인지는 응답 본문에서 밝혀진다("저는 Lucas입니다").
+
+> 앱 생성 후에도 **Settings → Basic Information → Display Information** 에서 언제든 바꿀 수 있다.
+
+### 앱 생성
+
 1. [api.slack.com/apps](https://api.slack.com/apps) → **Create New App**
 2. **From an app manifest** 선택
-3. 워크스페이스 선택 → 생성된 JSON 붙여넣기 → **Create**
+3. 워크스페이스 선택 → **수정한** JSON 붙여넣기 → **Create**
 
 매니페스트에 스코프·이벤트 구독·Socket Mode 설정이 모두 들어 있다. **§2와 §3은 확인용**이며, 매니페스트를 썼다면 건너뛰어도 된다.
 
