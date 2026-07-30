@@ -9,7 +9,8 @@
 #
 # 결과는 reviews/<타임스탬프>-<슬러그>/ 에 역할별 파일로 남는다.
 #
-# 칸반이 막혀 사람이 팬아웃을 대신하는 구조다. 배경은 docs/team-workflow.md.
+# 칸반을 열 정도가 아닌 가벼운 질의용. 이력이 필요한 검토는 /kanban 을 쓴다.
+# 배경은 docs/06-team-workflow.md.
 
 set -euo pipefail
 

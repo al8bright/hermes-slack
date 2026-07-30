@@ -48,21 +48,25 @@
                 lucas  ← 종합 (자식들의 summary·metadata 자동 전달)
 ```
 
-상세는 [kanban-workflow.md](./kanban-workflow.md).
+상세는 [02-kanban-workflow.md](./02-kanban-workflow.md).
 
-가벼운 질의(회의를 열 정도는 아닌 것)에는 [`ask-team.sh`](../scripts/ask-team.sh) 로 여러 역할에 직접 물어보는 편이 빠르다 — [team-workflow.md](./team-workflow.md).
+가벼운 질의(회의를 열 정도는 아닌 것)에는 [`ask-team.sh`](../scripts/ask-team.sh) 로 여러 역할에 직접 물어보는 편이 빠르다 — [06-team-workflow.md](./06-team-workflow.md).
 
-## 문서
+## 문서 — 구축 순서
 
-| 문서 | 내용 |
-| --- | --- |
-| [setup.md](./setup.md) | 프로필 10개 생성 · `SOUL.md` 배치 · 모델 배정 — **실행 절차** |
-| [kanban-workflow.md](./kanban-workflow.md) | Kanban 보드 협업 — 보드 구성 · 오케스트레이터 · 태스크 흐름 |
-| [team-workflow.md](./team-workflow.md) | 역할별 개별 대화 (칸반 없이 가볍게 물을 때) |
-| [slack-usage.md](./slack-usage.md) | **Slack에서 쓰는 법** — 대화 · 회의 · 역할 지목 · 진행 관리 |
-| [slack-setup.md](./slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 — 실행 절차 |
-| [gateway-slack.md](./gateway-slack.md) | Slack 연동 전략과 선택지 (앱을 몇 개 둘 것인가) |
-| [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) |
+**번호 순서대로 진행하면 된다.** 앞 단계의 검증이 통과해야 다음이 의미가 있다.
+
+| 순서 | 문서 | 내용 | 끝나면 |
+| --- | --- | --- | --- |
+| **01** | [setup](./01-setup.md) | 프로필 10개 생성 · `SOUL.md` 배치 · 모델 배정 | `lucas chat` 이 Tech Lead로 답한다 |
+| **02** | [kanban-workflow](./02-kanban-workflow.md) | 보드 생성 · 프로필 설명 · 디스패처 설정 · 태스크 흐름 | `kanban decompose` 가 역할별로 배정한다 |
+| **03** | [gateway-slack](./03-gateway-slack.md) | Slack 연동 전략 결정 — 앱을 몇 개 둘 것인가 | 어느 프로필에 게이트웨이를 붙일지 정해진다 |
+| **04** | [slack-setup](./04-slack-setup.md) | Slack 앱 발급 · 권한 · 토큰 · 이벤트 구독 | Slack에서 봇이 응답한다 |
+| **05** | [slack-usage](./05-slack-usage.md) | **Slack에서 쓰는 법** — 대화 · 회의 · 역할 지목 · 진행 관리 | 일상 사용 |
+| **06** | [team-workflow](./06-team-workflow.md) | 보조 — 터미널에서 여러 역할에 직접 질의 | 칸반을 열 정도가 아닐 때 |
+| — | [archive/](./archive/) | 폐기된 초기 설계 (Hermes를 직접 만든다는 전제였음) | — |
+
+**01~02 는 필수**다. 여기까지면 터미널에서 팀이 완전히 돌아간다. **03~04 는 Slack을 쓸 때만** 필요하고, **06 은 선택**이다.
 
 ## 스크립트
 
@@ -80,7 +84,7 @@
 | 역할 = 프로필 | 프로필 10개 | 프로필당 `SOUL.md`·모델이 하나뿐이므로 역할별 모델 차등의 유일한 방법 |
 | 페르소나 | `roles/*.md` → 각 프로필 `SOUL.md` | `SOUL.md` 가 시스템 프롬프트 슬롯 #1 |
 | 템플릿 | `bateam` 프로필에서 `--clone-from` | Codex 인증·스킬·터미널 백엔드를 상속 |
-| 협업 | Kanban 보드 (slug `bateam`) | `assignee` = 프로필명. **전 구간 검증 완료** ([kanban-workflow.md §5.5](./kanban-workflow.md)) |
+| 협업 | Kanban 보드 (slug `bateam`) | `assignee` = 프로필명. **전 구간 검증 완료** ([02-kanban-workflow.md §5.5](./02-kanban-workflow.md)) |
 | 조율자 | `lucas` | 분해와 종합. `kanban.orchestrator_profile` |
 | 게이트웨이 | `lucas` 1개 | Slack 앱 1개 |
 | `default` 프로필 | 건드리지 않음 | — |
@@ -91,7 +95,7 @@
 
 | 항목 | 사실 |
 | --- | --- |
-| `config set model` | `model` 은 `{default, provider, base_url}` 딕셔너리다. 스칼라로 덮으면 프로필이 죽는다. `model.default` 를 써야 한다 ([setup.md §5.1](./setup.md)) |
+| `config set model` | `model` 은 `{default, provider, base_url}` 딕셔너리다. 스칼라로 덮으면 프로필이 죽는다. `model.default` 를 써야 한다 ([01-setup.md §5.1](./01-setup.md)) |
 | `hermes setup` | 현재 기본 프로필(`◆`)을 설정한다. 특정 프로필은 `<alias> setup` |
 | `kanban.*` 설정 | 전역 `~/.hermes/config.yaml` 과 프로필 `config.yaml` 양쪽에 쓸 수 있다 |
 | 칸반 보드 DB | 보드마다 별도 파일 (`~/.hermes/kanban/boards/<slug>/kanban.db`) |
@@ -101,15 +105,15 @@
 
 ## 검증 완료 (2026-07-30)
 
-안건 1개 → 역할별 6개 분해 → 병렬 검토 → 의존성 순서 → 종합 결정까지 실제로 돌았다. Oscar의 반박이 Lucas의 결론을 바꾼 것까지 확인했다 — [kanban-workflow.md §5.5](./kanban-workflow.md).
+안건 1개 → 역할별 6개 분해 → 병렬 검토 → 의존성 순서 → 종합 결정까지 실제로 돌았다. Oscar의 반박이 Lucas의 결론을 바꾼 것까지 확인했다 — [02-kanban-workflow.md §5.5](./02-kanban-workflow.md).
 
-남은 것은 **Slack 게이트웨이 연결**뿐이다 — 절차는 [slack-setup.md](./slack-setup.md), 전략은 [gateway-slack.md](./gateway-slack.md).
+남은 것은 **Slack 게이트웨이 연결**뿐이다 — 절차는 [04-slack-setup.md](./04-slack-setup.md), 전략은 [03-gateway-slack.md](./03-gateway-slack.md).
 
 ## 미결 사항
 
 1. **Codex OAuth 복제 여부** — `--clone-from` 이 `auth.json` 을 포함하는지 미확인. 프로필별 재인증이 필요할 수 있다.
-2. **역할별 모델 차등** — 현재 인증 공급사가 OpenAI Codex뿐이라 `gpt-5.6-sol` / `terra` / `luna` 세 가지로만 나뉜다. OpenRouter를 붙이면 선택지가 넓어진다 ([setup.md §5.2](./setup.md)).
+2. **역할별 모델 차등** — 현재 인증 공급사가 OpenAI Codex뿐이라 `gpt-5.6-sol` / `terra` / `luna` 세 가지로만 나뉜다. OpenRouter를 붙이면 선택지가 넓어진다 ([01-setup.md §5.2](./01-setup.md)).
 3. **`temperature` 프로필별 지정 가능 여부** — 가능하면 성향을 수치로도 반영한다.
-4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([gateway-slack.md](./gateway-slack.md)).
+4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([03-gateway-slack.md](./03-gateway-slack.md)).
 5. **`AGENTS.md` 컨텍스트 잘림** — `74568 chars exceeds limit of 65280` 경고. `context_file_max_chars` 를 올리거나 파일을 줄여야 한다.
 6. **scratch 작업공간 보존** — 검토 성격의 태스크는 첨부로 충분하지만, 코드를 만지는 태스크에는 `--workspace dir:<절대경로>` 가 필요하다.

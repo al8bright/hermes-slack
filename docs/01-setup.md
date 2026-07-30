@@ -134,7 +134,7 @@ done
 | 문제 | 처리 |
 | --- | --- |
 | YAML 프론트매터가 시스템 프롬프트에 섞임 | 제거 |
-| `[Brian](./brian-backend.md)` 상대 링크가 프로필 디렉터리에서 깨짐 | 링크 평탄화 → `Brian` |
+| `[Brian](../roles/brian-backend.md)` 같은 상대 링크가 프로필 디렉터리에서 깨짐 | 링크 평탄화 → `Brian` |
 | 팀의 일원이라는 것과 Kanban 사용법을 모름 | `roles/_team.md` 를 덧붙임 (lucas 에겐 `_orchestrator.md` 추가) |
 
 이걸 매번 손으로 하면 역할을 다듬을 때마다 10번 반복해야 한다. 스크립트로 처리한다.
@@ -342,5 +342,5 @@ oscar  chat -q "마이크로서비스로 전환하기로 했다."
 
 ## 다음 단계
 
-- 보드 구성과 팀 운영: [kanban-workflow.md](./kanban-workflow.md)
-- Slack 연동: [gateway-slack.md](./gateway-slack.md)
+- 보드 구성과 팀 운영: [02-kanban-workflow.md](./02-kanban-workflow.md)
+- Slack 연동: [03-gateway-slack.md](./03-gateway-slack.md)

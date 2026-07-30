@@ -1,6 +1,6 @@
 # Slack 사용법
 
-> 상위 문서: [README.md](./README.md) · 설치: [slack-setup.md](./slack-setup.md) · 보드 운영: [kanban-workflow.md](./kanban-workflow.md)
+> 상위 문서: [README.md](./README.md) · 설치: [04-slack-setup.md](./04-slack-setup.md) · 보드 운영: [02-kanban-workflow.md](./02-kanban-workflow.md)
 
 Slack에서 BA Team을 쓰는 네 가지 방법이다. **무엇을 하려는지에 따라 고른다.**
 
@@ -48,7 +48,7 @@ Lucas가 Tech Lead 페르소나로 답한다. **보드에 기록이 남지 않�
 
 ### ⚠ 대화로는 특정 역할을 직접 부를 수 없다
 
-게이트웨이가 `lucas` 하나뿐이므로 **DM·멘션은 전부 Lucas에게 간다.** Grace나 Jack에게 직접 말을 거는 방법은 없다. 앱 1개 전략([gateway-slack.md](./gateway-slack.md))의 대가다.
+게이트웨이가 `lucas` 하나뿐이므로 **DM·멘션은 전부 Lucas에게 간다.** Grace나 Jack에게 직접 말을 거는 방법은 없다. 앱 1개 전략([03-gateway-slack.md](./03-gateway-slack.md))의 대가다.
 
 대안은 셋이다.
 
@@ -274,4 +274,4 @@ lucas gateway restart
 | `/kanban archive <id>` | 치우기 |
 | `/kanban stats` | 보드 요약 |
 
-터미널에서는 `hermes kanban <동사>` 로 동일하게 쓴다. 역할과 직접 길게 논의하려면 `grace chat` 처럼 프로필 별칭을 쓴다 — [team-workflow.md](./team-workflow.md).
+터미널에서는 `hermes kanban <동사>` 로 동일하게 쓴다. 역할과 직접 길게 논의하려면 `grace chat` 처럼 프로필 별칭을 쓴다 — [06-team-workflow.md](./06-team-workflow.md).

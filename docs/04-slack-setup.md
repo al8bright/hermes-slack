@@ -1,6 +1,6 @@
 # Slack 앱 발급과 연동
 
-> 상위 문서: [README.md](./README.md) · 전략 결정: [gateway-slack.md](./gateway-slack.md)
+> 상위 문서: [README.md](./README.md) · 전략 결정: [03-gateway-slack.md](./03-gateway-slack.md)
 >
 > 출처: [Slack | Hermes Agent](https://hermes-agent.nousresearch.com/docs/user-guide/messaging/slack)
 
@@ -181,7 +181,7 @@ Slack 제한: 앱 이름 35자, 봇 표시명 80자, 설명 140자.
 /kanban show t_abc123
 ```
 
-> 역할을 직접 지목하고 싶다면 `/lucas` · `/grace` … 를 추가로 등록할 수 있다. 다만 **앱이 하나이므로 응답 발신자는 봇 하나로 보인다.** 역할별로 아바타를 분리하려면 앱을 나눠야 한다 — [gateway-slack.md §2](./gateway-slack.md).
+> 역할을 직접 지목하고 싶다면 `/lucas` · `/grace` … 를 추가로 등록할 수 있다. 다만 **앱이 하나이므로 응답 발신자는 봇 하나로 보인다.** 역할별로 아바타를 분리하려면 앱을 나눠야 한다 — [03-gateway-slack.md §2](./03-gateway-slack.md).
 >
 > 스코프나 이벤트를 나중에 바꾸면 **앱을 재설치해야 반영된다.**
 
@@ -315,7 +315,7 @@ lucas gateway restart
 /kanban decompose t_2904a01b
 ```
 
-자세한 판단 기준은 [kanban-workflow.md §3](./kanban-workflow.md) 참조.
+자세한 판단 기준은 [02-kanban-workflow.md §3](./02-kanban-workflow.md) 참조.
 
 ---
 
@@ -352,6 +352,6 @@ tail -f ~/.hermes/profiles/lucas/logs/gateway.log
 
 ## 다음
 
-- **Slack에서 쓰는 법: [slack-usage.md](./slack-usage.md)**
-- 게이트웨이 전략과 선택지: [gateway-slack.md](./gateway-slack.md)
-- 보드 운영: [kanban-workflow.md](./kanban-workflow.md)
+- **Slack에서 쓰는 법: [05-slack-usage.md](./05-slack-usage.md)**
+- 게이트웨이 전략과 선택지: [03-gateway-slack.md](./03-gateway-slack.md)
+- 보드 운영: [02-kanban-workflow.md](./02-kanban-workflow.md)

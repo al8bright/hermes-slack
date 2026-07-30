@@ -1,8 +1,8 @@
 # 팀 운영 — 역할별 개별 대화
 
-> 상위 문서: [README.md](./README.md) · 선행: [setup.md](./setup.md)
+> 상위 문서: [README.md](./README.md) · 선행: [01-setup.md](./01-setup.md)
 >
-> 이전 방식([archive/kanban-workflow.md](./archive/kanban-workflow.md))은 Hermes v0.19.0에서 칸반 워커에게 `kanban_*` 툴이 노출되지 않아 보류했다.
+> 이전 방식([archive/02-kanban-workflow.md](./02-kanban-workflow.md))은 Hermes v0.19.0에서 칸반 워커에게 `kanban_*` 툴이 노출되지 않아 보류했다.
 
 ---
 
@@ -182,7 +182,7 @@ reviews/
 
 ## 7. 칸반으로 돌아가려면
 
-Hermes에서 워커 툴 노출 문제가 해결되면 [archive/kanban-workflow.md](./archive/kanban-workflow.md) 로 복귀한다. 그 문서 상단에 조사 결과(게이트 함수·설정 경로·실패한 시도 4가지)를 정리해 뒀다.
+Hermes에서 워커 툴 노출 문제가 해결되면 [archive/02-kanban-workflow.md](./02-kanban-workflow.md) 로 복귀한다. 그 문서 상단에 조사 결과(게이트 함수·설정 경로·실패한 시도 4가지)를 정리해 뒀다.
 
 확인 방법:
 

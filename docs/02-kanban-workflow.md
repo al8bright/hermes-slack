@@ -1,6 +1,6 @@
 # Kanban 협업 운영
 
-> 상위 문서: [README.md](./README.md) · 선행: [setup.md](./setup.md)
+> 상위 문서: [README.md](./README.md) · 선행: [01-setup.md](./01-setup.md)
 >
 > 출처: [Kanban (Multi-Agent Board)](https://hermes-agent.nousresearch.com/docs/user-guide/features/kanban)
 >
@@ -223,7 +223,7 @@ kanban_complete(
 )
 ```
 
-`summary` 는 **다음 담당자가 읽는 글**이다. 이 점을 `SOUL.md` 에 명시해 뒀다 ([setup.md §4](./setup.md)).
+`summary` 는 **다음 담당자가 읽는 글**이다. 이 점을 `SOUL.md` 에 명시해 뒀다 ([01-setup.md §4](./01-setup.md)).
 
 ### Lucas가 종합한다
 

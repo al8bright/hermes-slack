@@ -10,14 +10,14 @@
 
 ```
 roles/          페르소나 정의 10개 → 각 Hermes 프로필의 SOUL.md 원본
-docs/           구축·운영 문서
-  ├ setup.md            프로필 10개 생성 절차
-  ├ kanban-workflow.md  Kanban 보드 협업
-  ├ team-workflow.md    역할별 개별 대화 (가벼운 질의)
-  ├ slack-usage.md      Slack에서 쓰는 법
-  ├ slack-setup.md      Slack 앱 발급 · 권한 · 토큰 (실행 절차)
-  ├ gateway-slack.md    Slack 연동 전략
-  └ archive/            보류·폐기된 설계
+docs/           구축·운영 문서 — 번호 순서대로 진행한다
+  ├ 01-setup.md            프로필 10개 생성 · SOUL.md · 모델          [필수]
+  ├ 02-kanban-workflow.md  보드 · 프로필 설명 · 디스패처 · 태스크 흐름  [필수]
+  ├ 03-gateway-slack.md    Slack 연동 전략 (앱을 몇 개 둘 것인가)      [Slack]
+  ├ 04-slack-setup.md      Slack 앱 발급 · 권한 · 토큰                [Slack]
+  ├ 05-slack-usage.md      Slack에서 쓰는 법                         [Slack]
+  ├ 06-team-workflow.md    보조 — 터미널에서 여러 역할에 직접 질의     [선택]
+  └ archive/               폐기된 초기 설계
 scripts/        install-souls.sh · set-models.sh · ask-team.sh
 config/         models.conf — 역할별 모델 배정
 ai-development-team.md  팀 구성 원안
@@ -40,9 +40,9 @@ ai-development-team.md  팀 구성 원안
 
 **Hermes에서 프로필 = 에이전트 1개 = `SOUL.md` 1개 = 모델 1개다.** 따라서 역할 10개는 프로필 10개가 된다. 하나의 프로필 안에 여러 페르소나를 두는 구조는 제품이 지원하지 않는다.
 
-역할 간 협업은 **Kanban 보드**가 담당한다. 태스크의 `--assignee` 가 프로필명이고, 디스패처가 해당 프로필을 워커로 기동한다 — [docs/kanban-workflow.md](./docs/kanban-workflow.md).
+역할 간 협업은 **Kanban 보드**가 담당한다. 태스크의 `--assignee` 가 프로필명이고, 디스패처가 해당 프로필을 워커로 기동한다 — [docs/02-kanban-workflow.md](./docs/02-kanban-workflow.md).
 
-가벼운 질의에는 `scripts/ask-team.sh` 로 여러 역할에 직접 물어보는 편이 빠르다 — [docs/team-workflow.md](./docs/team-workflow.md).
+가벼운 질의에는 `scripts/ask-team.sh` 로 여러 역할에 직접 물어보는 편이 빠르다 — [docs/06-team-workflow.md](./docs/06-team-workflow.md).
 
 ## 맥에서 시작하기
 
@@ -51,7 +51,7 @@ git clone git@github-al8bright:al8bright/hermes-slack.git ~/dev/hermes-slack
 cd ~/dev/hermes-slack
 ```
 
-이후 [`docs/setup.md`](./docs/setup.md) 를 순서대로 따른다. 요약하면:
+이후 [`docs/01-setup.md`](./docs/01-setup.md) 를 순서대로 따른다. 요약하면:
 
 ```bash
 # 1. 템플릿 프로필 확인 (bateam 이 이미 설정된 상태를 가정)
@@ -90,7 +90,7 @@ grace chat
 jack  chat -q "외부 결제 API를 붙이려 한다"
 ```
 
-Slack에서는 이렇게 쓴다 — [`docs/slack-usage.md`](./docs/slack-usage.md).
+Slack에서는 이렇게 쓴다 — [`docs/05-slack-usage.md`](./docs/05-slack-usage.md).
 
 ```
 @BA Team FastAPI가 Flask보다 항상 빠른가요?          대화 (Lucas 응답)
@@ -99,13 +99,13 @@ Slack에서는 이렇게 쓴다 — [`docs/slack-usage.md`](./docs/slack-usage.m
 /kanban list                                        현황
 ```
 
-결과는 `reviews/<타임스탬프>-<슬러그>/` 에 역할별 파일로 남는다. 상세는 [`docs/team-workflow.md`](./docs/team-workflow.md).
+결과는 `reviews/<타임스탬프>-<슬러그>/` 에 역할별 파일로 남는다. 상세는 [`docs/06-team-workflow.md`](./docs/06-team-workflow.md).
 
 ## 착수 전 확인 필요
 
 1. **Codex OAuth 복제 여부** — `--clone-from` 이 `auth.json` 을 포함하는지 불명확. 복제되지 않으면 프로필마다 재인증 필요
 2. **사용 가능한 모델 목록** — 현재 인증된 공급사는 OpenAI Codex뿐. 역할별 모델 차등이 가능한지 `hermes model` 로 확인
-3. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달림 ([`docs/gateway-slack.md`](./docs/gateway-slack.md))
+3. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달림 ([`docs/03-gateway-slack.md`](./docs/03-gateway-slack.md))
 
 ## 제약
 

@@ -19,4 +19,4 @@
 
 ## 현행 문서
 
-현행 문서는 [`docs/`](../) 를 볼 것. 운영 방식은 [`team-workflow.md`](../team-workflow.md).
+현행 문서는 [`docs/`](../) 를 볼 것. 운영 방식은 [`06-team-workflow.md`](../06-team-workflow.md).

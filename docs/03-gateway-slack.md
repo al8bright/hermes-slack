@@ -1,6 +1,6 @@
 # Slack 게이트웨이 전략
 
-> 상위 문서: [README.md](./README.md) · 선행: [setup.md](./setup.md)
+> 상위 문서: [README.md](./README.md) · 선행: [01-setup.md](./01-setup.md)
 
 프로필 10개를 Slack에 어떻게 노출할지의 문제다. 결론부터: **`lucas` 하나만 게이트웨이를 띄우고 시작한다.**
 
@@ -80,7 +80,7 @@ Slack ──▶ [lucas gw + 디스패처]  [grace gw]
 
 ## 4. 구성 절차
 
-**Slack 앱 발급·스코프·이벤트 구독의 상세 절차는 [slack-setup.md](./slack-setup.md) 에 있다.** 여기서는 흐름만 적는다.
+**Slack 앱 발급·스코프·이벤트 구독의 상세 절차는 [04-slack-setup.md](./04-slack-setup.md) 에 있다.** 여기서는 흐름만 적는다.
 
 ```bash
 # 1. 매니페스트 생성 → api.slack.com 에서 앱 생성
