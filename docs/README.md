@@ -78,7 +78,7 @@
 | 역할 = 프로필 | 프로필 10개 | 프로필당 `SOUL.md`·모델이 하나뿐이므로 역할별 모델 차등의 유일한 방법 |
 | 페르소나 | `roles/*.md` → 각 프로필 `SOUL.md` | `SOUL.md` 가 시스템 프롬프트 슬롯 #1 |
 | 템플릿 | `bateam` 프로필에서 `--clone-from` | Codex 인증·스킬·터미널 백엔드를 상속 |
-| 협업 | Kanban 보드 (slug `bateam`) | `assignee` = 프로필명. 동작 확인됨 |
+| 협업 | Kanban 보드 (slug `bateam`) | `assignee` = 프로필명. **전 구간 검증 완료** ([kanban-workflow.md §5.5](./kanban-workflow.md)) |
 | 조율자 | `lucas` | 분해와 종합. `kanban.orchestrator_profile` |
 | 게이트웨이 | `lucas` 1개 | Slack 앱 1개 |
 | `default` 프로필 | 건드리지 않음 | — |
@@ -97,6 +97,12 @@
 | decomposer 라우팅 | 프로필 **설명**(`profile.yaml`)을 읽고 배정한다. 설명이 없으면 전부 `default_assignee` 로 떨어진다 |
 | 칸반 워커 툴 | **정상 동작.** 단 `hermes chat` + `HERMES_KANBAN_TASK` 로는 검증되지 않는다 — chat 모드와 디스패처 spawn 경로의 툴 등록이 다르다. 실제 태스크를 dispatch 해서 `kanban show <id>` 이벤트로 확인할 것 |
 
+## 검증 완료 (2026-07-30)
+
+안건 1개 → 역할별 6개 분해 → 병렬 검토 → 의존성 순서 → 종합 결정까지 실제로 돌았다. Oscar의 반박이 Lucas의 결론을 바꾼 것까지 확인했다 — [kanban-workflow.md §5.5](./kanban-workflow.md).
+
+남은 것은 **Slack 게이트웨이 연결**뿐이다 ([gateway-slack.md](./gateway-slack.md)).
+
 ## 미결 사항
 
 1. **Codex OAuth 복제 여부** — `--clone-from` 이 `auth.json` 을 포함하는지 미확인. 프로필별 재인증이 필요할 수 있다.
@@ -104,4 +110,4 @@
 3. **`temperature` 프로필별 지정 가능 여부** — 가능하면 성향을 수치로도 반영한다.
 4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([gateway-slack.md](./gateway-slack.md)).
 5. **`AGENTS.md` 컨텍스트 잘림** — `74568 chars exceeds limit of 65280` 경고. `context_file_max_chars` 를 올리거나 파일을 줄여야 한다.
-6. **`config/models.conf` 재배정** — 진단 과정에서 `lucas` 를 `gpt-5.6-sol` → `gpt-5.6-terra` 로 바꿨다. 원인이 모델이 아니었으므로 원래 배정으로 되돌릴지 결정 필요.
+6. **scratch 작업공간 보존** — 검토 성격의 태스크는 첨부로 충분하지만, 코드를 만지는 태스크에는 `--workspace dir:<절대경로>` 가 필요하다.
