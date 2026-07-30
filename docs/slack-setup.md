@@ -292,6 +292,31 @@ hermes gateway list
 
 디스패처가 게이트웨이 안에 있으므로, 게이트웨이가 뜬 뒤로는 **60초마다 자동으로** `ready` 태스크를 집어 워커를 띄운다. 더 이상 `hermes kanban dispatch` 를 수동으로 칠 필요가 없다.
 
+### ⚠ `--assignee` 없이 만들면 `triage` 에 멈춘다
+
+```
+/kanban create "팀 소개: 각자 자기 역할을 한 줄로 정리"
+   → Created t_2904a01b  (triage, assignee=-)
+```
+
+담당자가 없으면 디스패처가 띄울 대상이 없어 `triage` 로 들어간다. `kanban.auto_decompose` 가 꺼져 있으면 **여기서 그대로 멈춘다.**
+
+Slack에서 쓸 거라면 자동 분해를 켜는 것을 권한다 — 안건을 던지고 분해 명령을 치러 돌아와야 한다면 Slack에서 쓰는 이점이 없다.
+
+```bash
+hermes config set kanban.auto_decompose true
+lucas   config set kanban.auto_decompose true
+lucas gateway restart
+```
+
+수동으로 진행하려면:
+
+```
+/kanban decompose t_2904a01b
+```
+
+자세한 판단 기준은 [kanban-workflow.md §3](./kanban-workflow.md) 참조.
+
 ---
 
 ## 12. 문제 해결

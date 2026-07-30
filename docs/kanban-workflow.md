@@ -101,58 +101,42 @@ for scope in "hermes" "lucas"; do
 done
 ```
 
-### `auto_decompose` — 켤 것인가
+### `auto_decompose` — 켠다
 
 ```yaml
 kanban:
-  auto_decompose: true          # triage 태스크를 LLM이 자동 분해
-  auto_decompose_per_tick: 3
+  auto_decompose: true          # triage 태스크를 자동 분해
+  auto_decompose_per_tick: 3    # tick 당 최대 분해 건수
 auxiliary:
   kanban_decomposer:
     provider: "…"
     model: "…"
 ```
 
-**초기에는 끄는 것을 권한다.** 자동 분해는 별도 모델이 태스크를 쪼개 배정까지 하는데, 10개 역할의 배정 기준이 제대로 학습되기 전에는 엉뚱한 담당자가 지정된다. Lucas가 명시적으로 분해하는 흐름을 먼저 안정시키고, 배정 패턴이 자리 잡은 뒤 켠다.
-
 ```bash
-hermes config set kanban.auto_decompose false
+hermes config set kanban.auto_decompose true
+lucas   config set kanban.auto_decompose true
+lucas gateway restart
 ```
 
----
+**초기 구축 때는 껐다가, 프로필 설명(§3.5)을 넣은 뒤 켜는 순서가 맞다.** 설명이 없으면 decomposer가 담당자를 못 골라 전부 한 프로필로 몰리고, 그 상태로 자동 분해가 돌면 쓰레기 태스크만 쌓인다.
 
-## 3.5 프로필 설명 — 배정의 전제
+설명을 넣어 라우팅이 검증된 뒤에는 켜는 편이 낫다. **특히 Slack에서 쓴다면 필수에 가깝다** — 안건을 던지고 나서 분해 명령을 치러 돌아와야 한다면 Slack 인터페이스의 이점이 사라진다.
 
-**decomposer 는 프로필 이름이 아니라 설명을 읽고 담당자를 정한다.**
-
-> the built-in decomposer uses `auxiliary.kanban_decomposer`, **reads your profile roster + descriptions**, and produces a graph of child tasks routed to the best-fit specialists.
-
-설명이 비어 있으면 라우팅이 불가능해 전부 `kanban.default_assignee` 로 떨어진다. 실제로 처음 `decompose` 를 돌렸을 때 4개 자식이 모두 `lucas` 에게 배정된 것이 이 때문이었다.
-
-```bash
-./scripts/set-descriptions.sh --dry-run
-./scripts/set-descriptions.sh
-./scripts/set-descriptions.sh --show      # 적용 확인
+```
+/kanban create "결제 모듈에 외부 PG를 추가하려 한다"
+   → 60초 내 자동 분해 → 역할별 병렬 검토 → Lucas 종합 → 스레드로 완료 알림
 ```
 
-내용은 [`config/descriptions.conf`](../config/descriptions.conf) 에 있다. **성격이 아니라 어떤 태스크를 맡아야 하는가**를 쓴다.
+**모든 것을 태스크로 만들지는 말 것.** `auto_decompose` 가 켜지면 triage에 들어온 것이 전부 분해 대상이 된다. 한 줄짜리 질문까지 6개로 쪼개면 낭비다.
 
-| | |
+| 상황 | 방법 |
 | --- | --- |
-| 나쁨 | "보수적이고 리스크를 싫어한다" |
-| 좋음 | "권한·인증·데이터 흐름·공급망 위험을 검토한다" |
+| 회의가 필요한 안건 | `/kanban create "..."` — 팀 전체 검토 |
+| 단순 질문 | 그냥 대화 — Lucas가 바로 답함 |
+| 특정 역할만 | `/kanban create "..." --assignee jack` — 분해 없이 그 사람에게 직행 |
 
-decomposer 가 태스크 본문과 이 설명을 매칭하므로, 설명에 그 역할이 다루는 **명사**가 들어 있어야 한다.
-
-수동으로는 이렇게 한다.
-
-```bash
-hermes profile describe jack --text "보안 검토와 위협 모델링을 맡는다. ..."
-hermes profile describe jack                 # 읽기
-hermes profile describe --all --auto         # 비어 있는 것만 LLM이 자동 생성
-```
-
-설명은 `<profile_dir>/profile.yaml` 에 저장되어 게이트웨이와 공유된다.
+`--assignee` 를 주면 `triage` 를 건너뛰고 바로 `ready` 가 되므로 분해되지 않는다. 반대로 담당자를 비우면 `triage` 로 들어가 분해 대상이 된다.
 
 ---
 
