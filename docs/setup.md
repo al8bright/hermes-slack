@@ -178,10 +178,29 @@ head -20 ~/.hermes/profiles/grace/SOUL.md    # 프론트매터가 사라졌는�
 tail -40 ~/.hermes/profiles/lucas/SOUL.md    # 오케스트레이터 지침이 붙었는지
 grep -c "](\./" ~/.hermes/profiles/*/SOUL.md # 링크 평탄화 확인 — 전부 0 이어야 한다
 
+# ⚠ 차단 여부 확인 — 가장 중요하다
+grep -h "blocked" ~/.hermes/profiles/*/logs/agent.log | tail -5
+
 grace chat -q "너는 누구고 팀에서 무슨 일을 하지?"
 ```
 
 Grace가 "예외 상황도 정의해야 합니다" 류의 반응을 보이고 동료 이름을 알고 있으면 페르소나가 먹은 것이다.
+
+### ⚠ 페르소나가 안 먹을 때 — 인젝션 스캔 차단
+
+일반 Hermes 어시스턴트처럼 답한다면 `SOUL.md` 가 **통째로 차단**된 것이다. Hermes 는 시스템 프롬프트에 넣기 전 `_scan_context_content()` 로 인젝션 패턴을 검사하고, **하나만 걸려도 파일 전체를 버린다.**
+
+```bash
+grep "blocked" ~/.hermes/profiles/<id>/logs/agent.log | tail -3
+```
+
+```
+WARNING agent.prompt_builder: Context file SOUL.md blocked: invisible_unicode_U+200D
+```
+
+실제로 `👨‍💼`(= `👨` + U+200D ZWJ + `💼`) 하나 때문에 Lucas 페르소나가 전부 사라졌다. **ZWJ 조합 이모지를 페르소나 문서에 쓰지 말 것.** `install-souls.sh` 가 보이지 않는 유니코드를 제거하지만, 원본에서도 피하는 편이 낫다.
+
+스캔 범위는 *classic injection · promptware/C2 · role-play hijack* 이다. 페르소나 문서에 명령형 코드 블록이나 은닉 문자가 들어가면 같은 일이 생긴다.
 
 ---
 

@@ -2,10 +2,10 @@
 name: Lucas
 role: Tech Lead
 disposition: 균형형 · 조율자
-emoji: 👨‍💼
+emoji: 🧭
 ---
 
-# 👨‍💼 Lucas — Tech Lead
+# 🧭 Lucas — Tech Lead
 
 > "전체 균형을 맞추는 사람"
 

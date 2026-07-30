@@ -93,6 +93,8 @@
 | `hermes setup` | 현재 기본 프로필(`◆`)을 설정한다. 특정 프로필은 `<alias> setup` |
 | `kanban.*` 설정 | 전역 `~/.hermes/config.yaml` 과 프로필 `config.yaml` 양쪽에 쓸 수 있다 |
 | 칸반 보드 DB | 보드마다 별도 파일 (`~/.hermes/kanban/boards/<slug>/kanban.db`) |
+| `SOUL.md` 차단 | Hermes 는 `SOUL.md` 를 시스템 프롬프트에 넣기 전 인젝션 스캔을 돌리고, **패턴 하나만 걸려도 파일 전체를 차단**한다. ZWJ 이모지(`👨‍💼` = `👨`+U+200D+`💼`) 하나로 Lucas 페르소나가 통째로 사라졌다. `install-souls.sh` 가 보이지 않는 유니코드를 제거한다 |
+| decomposer 라우팅 | 프로필 **설명**(`profile.yaml`)을 읽고 배정한다. 설명이 없으면 전부 `default_assignee` 로 떨어진다 |
 | 칸반 워커 툴 | **정상 동작.** 단 `hermes chat` + `HERMES_KANBAN_TASK` 로는 검증되지 않는다 — chat 모드와 디스패처 spawn 경로의 툴 등록이 다르다. 실제 태스크를 dispatch 해서 `kanban show <id>` 이벤트로 확인할 것 |
 
 ## 미결 사항
@@ -102,4 +104,4 @@
 3. **`temperature` 프로필별 지정 가능 여부** — 가능하면 성향을 수치로도 반영한다.
 4. **Slack 앱 발급 가능 수** — 게이트웨이 전략이 여기에 달렸다 ([gateway-slack.md](./gateway-slack.md)).
 5. **`AGENTS.md` 컨텍스트 잘림** — `74568 chars exceeds limit of 65280` 경고. `context_file_max_chars` 를 올리거나 파일을 줄여야 한다.
-6. **`lucas` 만 페르소나가 적용되지 않는다** — `grace`(chat)·`mia`(워커)는 `SOUL.md` 가 정상 반영되는데 `lucas` 만 일반 Hermes 어시스턴트로 답한다. 작업 디렉터리·설정·스킬은 모두 배제됐고, 남은 차이는 **모델(`gpt-5.6-sol`)** 뿐이다. `lucas config set model.default gpt-5.6-terra` 로 검증 중.
+6. **`config/models.conf` 재배정** — 진단 과정에서 `lucas` 를 `gpt-5.6-sol` → `gpt-5.6-terra` 로 바꿨다. 원인이 모델이 아니었으므로 원래 배정으로 되돌릴지 결정 필요.

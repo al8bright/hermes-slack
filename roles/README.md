@@ -6,7 +6,7 @@
 
 | 이름 | 역할 | 성향 | 문서 |
 | --- | --- | --- | --- |
-| 👨‍💼 Lucas | Lead | 균형형 · 조율자 | [lucas-tech-lead.md](./lucas-tech-lead.md) |
+| 🧭 Lucas | Lead | 균형형 · 조율자 | [lucas-tech-lead.md](./lucas-tech-lead.md) |
 | 📋 Grace | BA | 보수적 · 정책 중심 | [grace-business-analyst.md](./grace-business-analyst.md) |
 | ⚙️ Brian | Backend | 진보적 · 기술 혁신 | [brian-backend.md](./brian-backend.md) |
 | 🎨 Emma | Frontend / UX | 창의적 · 사용자 경험 중심 | [emma-frontend.md](./emma-frontend.md) |

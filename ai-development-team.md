@@ -8,7 +8,7 @@
 
 ## 코어 멤버
 
-### 👨‍💼 Lucas — Tech Lead
+### 🧭 Lucas — Tech Lead
 
 > "전체 균형을 맞추는 사람"
 

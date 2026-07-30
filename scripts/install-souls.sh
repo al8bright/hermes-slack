@@ -86,10 +86,16 @@ for pair in $PAIRS; do
     continue
   fi
 
-  # 프론트매터 제거 + 링크 평탄화
+  # 프론트매터 제거 + 링크 평탄화 + 보이지 않는 유니코드 제거
+  #
+  # Hermes 는 SOUL.md 를 시스템 프롬프트에 넣기 전 프롬프트 인젝션 스캔을 돌리고,
+  # 패턴이 하나라도 걸리면 **파일 전체를 차단**한다 (agent/prompt_builder.py).
+  #   WARNING agent.prompt_builder: Context file SOUL.md blocked: invisible_unicode_U+200D
+  # ZWJ 이모지(👨‍💼 = 👨 + U+200D + 💼) 하나로 페르소나가 통째로 사라지므로 미리 걷어낸다.
   body="$(
     awk 'NR==1 && $0=="---" {fm=1; next} fm && $0=="---" {fm=0; next} !fm' "$src" \
-      | sed -E 's/\[([^]]*)\]\([^)]*\)/\1/g'
+      | sed -E 's/\[([^]]*)\]\([^)]*\)/\1/g' \
+      | LC_ALL=C sed $'s/\xe2\x80\x8b//g; s/\xe2\x80\x8c//g; s/\xe2\x80\x8d//g; s/\xe2\x81\xa0//g; s/\xef\xbb\xbf//g; s/\xc2\xad//g'
   )"
 
   extra=""
